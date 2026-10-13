@@ -18,7 +18,8 @@ export function AllocationPanel({
   onDone,
 }: {
   orderId: string;
-  onDone: () => void;
+  /** 受注一覧を取り直す。完了を待ってから busy を解除する。 */
+  onDone: () => void | Promise<void>;
 }) {
   const [data, setData] = useState<PlanResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -66,7 +67,7 @@ export function AllocationPanel({
           ? '日付逆転を承知のうえで引き当てました。逸脱として記録しています。'
           : '引当が完了しました。',
       );
-      onDone();
+      await onDone();
     } catch (e) {
       setError((e as Error).message);
     } finally {
@@ -87,10 +88,14 @@ export function AllocationPanel({
         <dd className="font-medium tabular-nums">{order.requested_date}</dd>
       </dl>
 
-      {done && <div className="mb-4"><Alert tone="good" title={done} /></div>}
       {error && <div className="mb-4"><Alert tone="bad" title="引当できませんでした">{error}</Alert></div>}
 
-      {plan.blockedReason ? (
+      {/* 引当後に古い候補一覧と警告を出したままにすると、完了したのか未完了なのか読めなくなる */}
+      {done ? (
+        <Alert tone="good" title={done}>
+          この受注は「引当済」になりました。出荷前チェックへ進めます。
+        </Alert>
+      ) : plan.blockedReason ? (
         <Alert tone="bad" title="引当できません">{plan.blockedReason}</Alert>
       ) : (
         <>

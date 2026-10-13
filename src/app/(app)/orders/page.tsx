@@ -11,9 +11,25 @@ import {
   type OrderStatus,
 } from '@/lib/types';
 
-type OrderRow = Order & {
-  allocations?: { lot_id: string; reversal_override: boolean; lots?: { lot_code: string; expiry_date: string } }[];
+type AllocationRow = {
+  lot_id: string;
+  reversal_override: boolean;
+  lots?: { lot_code: string; expiry_date: string };
 };
+
+/**
+ * allocations.order_id に UNIQUE があるため、PostgREST は 1 対 1 と判断して
+ * 配列ではなく「オブジェクト」を返す。将来 UNIQUE を外して分割引当に対応した場合は
+ * 配列に変わるので、どちらの形でも読めるようにしておく。
+ */
+type OrderRow = Order & {
+  allocations?: AllocationRow | AllocationRow[] | null;
+};
+
+function firstAllocation(a: OrderRow['allocations']): AllocationRow | null {
+  if (!a) return null;
+  return Array.isArray(a) ? (a[0] ?? null) : a;
+}
 
 const TONE: Record<OrderStatus, 'warn' | 'info' | 'good' | 'neutral'> = {
   created: 'warn',
@@ -72,7 +88,7 @@ export default function OrdersPage() {
                 </thead>
                 <tbody>
                   {orders.map((o) => {
-                    const alloc = o.allocations?.[0];
+                    const alloc = firstAllocation(o.allocations);
                     return (
                       <tr key={o.id} className="border-b border-slate-100 last:border-0">
                         <td className="py-2 pr-4 font-mono text-xs">{o.order_code}</td>
