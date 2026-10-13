@@ -5,9 +5,9 @@
 
 | | |
 |---|---|
-| デプロイ URL | `（Vercel のデプロイ後にここへ貼る）` |
-| Supabase プロジェクト | `（Supabase のプロジェクト URL をここへ貼る）` |
-| リポジトリ | `（GitHub の URL をここへ貼る）` |
+| デプロイ URL | **https://yuki-coldchain-lab2.vercel.app** |
+| Supabase プロジェクト | https://kzdbvxeqgowlafgumnya.supabase.co |
+| リポジトリ | https://github.com/dieplth-22073/yuki-coldchain-lab2 |
 
 ---
 
@@ -17,7 +17,7 @@
 
 | メールアドレス | パスワード |
 |---|---|
-| `demo@example.com` | `（Supabase で作成したパスワードをここへ記載）` |
+| `demo@example.com` | `ColdChain2026!` |
 
 > アカウントは Supabase ダッシュボードの **Authentication → Users → Add user** で作成します。
 > 作成時に **Auto Confirm User** を有効にしてください（メール確認を省略するため）。
